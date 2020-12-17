@@ -9,4 +9,10 @@ def datareader():
 
 def test_get_history_data(datareader):
     print("\n")
-    print(datareader.get_history_data())
+    df = datareader.get_history_data()
+    print(df)
+    print(df.index)
+
+
+def test_string2datetime64(datareader):
+    print(datareader.string2datetime64("2018-01-01"))

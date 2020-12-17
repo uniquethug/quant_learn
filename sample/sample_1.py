@@ -1,38 +1,23 @@
-import pandas_datareader.data as web
 from datetime import datetime
 import backtrader as bt
+from data_reader.data_reader import DataReader
 
-from pandas_datareader import data as pdr
-
-import yfinance as yf
-yf.pdr_override() #需要调用这个函数
-
-
-#回测期间
-start=datetime(2015, 1, 1)
-end=datetime(2015, 6, 1)
-
-# 获取数据
-# <bound method IndexOpsMixin.tolist of Index(['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'], dtype='object')>
-df = pdr.get_data_yahoo("600519.SS", start=start, end=end)
 
 class my_strategy1(bt.Strategy):
     #全局设定交易策略的参数
-    params=(
-        ('maperiod',20),
-           )
+    params = (('maperiod', 20),)
 
     def __init__(self):
         #指定价格序列
-        self.dataclose=self.datas[0].close
+        self.dataclose = self.datas[0].close
         # 初始化交易指令、买卖价格和手续费
         self.order = None
         self.buyprice = None
         self.buycomm = None
 
         #添加移动均线指标，内置了talib模块
-        self.sma = bt.indicators.SimpleMovingAverage(
-                      self.datas[0], period=self.params.maperiod)
+        self.sma = bt.indicators.SimpleMovingAverage(self.datas[0], period=self.params.maperiod)
+
     def next(self):
         if self.order: # 检查是否有指令等待执行,
             return
@@ -49,7 +34,9 @@ class my_strategy1(bt.Strategy):
                 self.order = self.sell(size=500)
 
 
-
+start = datetime(2018, 1, 1)
+end = datetime(2018, 6, 1)
+df = DataReader().get_history_data(start=start.strftime('%Y%m%d'), end=end.strftime('%Y%m%d'))
 # 加载数据
 data = bt.feeds.PandasData(dataname=df, fromdate=start, todate=end)
 
